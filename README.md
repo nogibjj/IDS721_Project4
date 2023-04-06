@@ -53,6 +53,16 @@ Support and Contribution
 
 If you encounter any issues or have suggestions for improvements, please open an issue in the GitHub repository. Contributions are also welcome via pull requests.
 
+
+## Usage
+1. Set up an S3 bucket to store raw data and processed data: ```aws s3api create-bucket --bucket my-serverless-data-pipeline-bucket --region us-west-2```
+
+2. Create an AWS Glue Crawler to infer the schema of your raw data and store it in the AWS Glue Data Catalog: ```aws glue create-crawler --name my-data-crawler --role MyGlueServiceRole --database-name my-data-db --targets S3Targets=[{Path=s3://my-serverless-data-pipeline-bucket/raw-data/}] --region us-west-2```
+
+3. Deploy to AWS ```aws lambda create-function --function-name my-data-processing-function --runtime python3.9 --role MyLambdaServiceRole --handler lambda_function.lambda_handler --zip-file fileb://lambda_function.zip --environment Variables={S3_BUCKET=my-serverless-data-pipeline-bucket} --region us-west-2```
+
+4. Set up an event notification ``` aws s3api put-bucket-notification-configuration --bucket my-serverless-data-pipeline-bucket --notification-configuration file://notification_configuration.json```
+
 ## License
 
 This project is licensed under the MIT License.
